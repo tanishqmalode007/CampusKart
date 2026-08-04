@@ -1,7 +1,8 @@
 import "./App.css";
 import { Routes, Route } from "react-router-dom";
-
+import MobileNavbar from "./components/MobileNavbar";
 import Navbar from "./components/Navbar";
+import ProtectedRoute from "./components/ProtectedRoute";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -13,6 +14,7 @@ function App() {
   return ( 
     <>
       <Navbar />
+<MobileNavbar />
 
       <Routes>
         <Route path="/" element={<Home />} />
@@ -21,7 +23,11 @@ function App() {
         <Route path="/browse" element={<Browse />} />
         <Route
   path="/my-campus"
-  element={<MyCampus />}
+  element={
+    <ProtectedRoute>
+      <MyCampus />
+    </ProtectedRoute>
+  }
 />
         <Route
             path="/product/:id"
@@ -29,7 +35,11 @@ function App() {
             />
           <Route
   path="/sell"
-  element={<Sell />}
+  element={
+    <ProtectedRoute>
+      <Sell />
+    </ProtectedRoute>
+  }
 />
     
      </Routes>

@@ -1,11 +1,11 @@
-const API = "http://127.0.0.1:8000";
+import products from "../data/products";
 
 export async function getProducts() {
-    const response = await fetch(`${API}/products`);
-    return response.json();
+  return products;
 }
 
 export async function getProduct(id) {
-    const response = await fetch(`${API}/products/${id}`);
-    return response.json();
+  return products.find(
+    (product) => product.id === Number(id)
+  );
 }

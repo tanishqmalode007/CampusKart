@@ -16,7 +16,7 @@ function Register() {
 
         <h1>Create Your Account</h1>
 
-        <p>Join CampusKart</p>
+        <p>Join CampusKart and start buying & selling.</p>
 
         <input
           type="text"
@@ -29,16 +29,61 @@ function Register() {
         />
 
         <input
+          type="tel"
+          placeholder="Mobile Number"
+        />
+
+        <input
+          type="text"
+          placeholder="College Name"
+        />
+
+        <select defaultValue="">
+          <option value="" disabled>
+            Select Department
+          </option>
+
+          <option>Information Technology (IT)</option>
+          <option>Computer Engineering</option>
+          <option>Mechanical Engineering</option>
+          <option>ENTC</option>
+          <option>Artificial Intelligence & Data Science (AI & DS)</option>
+        </select>
+
+        <select defaultValue="">
+          <option value="" disabled>
+            Select Year
+          </option>
+
+          <option>First Year (FE)</option>
+          <option>Second Year (SE)</option>
+          <option>Third Year (TE)</option>
+          <option>Final Year (BE)</option>
+        </select>
+
+        <input
           type="password"
           placeholder="Password"
         />
 
-        <button>Create Account</button>
+        <input
+          type="password"
+          placeholder="Confirm Password"
+        />
 
-        <span>
+        <label className="terms-check">
+          <input type="checkbox" />
+          <span>I agree to the Terms & Conditions</span>
+        </label>
+
+        <button className="create-btn">
+          Create Account
+        </button>
+
+        <p className="login-link">
           Already have an account?{" "}
           <a href="/login">Login</a>
-        </span>
+        </p>
 
       </div>
     </div>

@@ -1,34 +1,22 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-import DashboardHome from "../components/dashboard/DashboardHome";
-import MyListings from "../components/dashboard/MyListings";
-import Wishlist from "../components/dashboard/Wishlist";
-import PurchaseRequests from "../components/dashboard/PurchaseRequests";
-import Settings from "../components/dashboard/Settings";
+import { FaUserCircle } from "react-icons/fa";
+import { useAuth } from "../context/AuthContext";
 
 function MyCampus() {
   const navigate = useNavigate();
+  const { logout } = useAuth();
 
-  const [activePage, setActivePage] = useState("dashboard");
+  // Dummy user (Firebase later)
+  const user = {
+    name: "Student Name",
+    year: "Second Year",
+    department: "IT",
+    college: "PVG COE, Nashik",
+  };
 
-  const renderPage = () => {
-    switch (activePage) {
-      case "listings":
-        return <MyListings />;
-
-      case "wishlist":
-        return <Wishlist />;
-
-      case "requests":
-        return <PurchaseRequests />;
-
-      case "settings":
-        return <Settings />;
-
-      default:
-        return <DashboardHome />;
-    }
+  const handleLogout = () => {
+    logout();
+    navigate("/");
   };
 
   return (
@@ -41,55 +29,46 @@ function MyCampus() {
         ← Back
       </button>
 
-      <div className="campus-layout">
+      <div className="profile-card">
 
-        <div className="sidebar">
+        <FaUserCircle className="profile-avatar" />
 
-          <div className="user-box">
+        <h2>{user.name}</h2>
 
-            <div className="avatar">👤</div>
+        <div className="profile-info">
 
-            <h2>User</h2>
+          <p>📚 {user.year} • {user.department}</p>
 
-            <p>Verified Student</p>
+          <p>🏫 {user.college}</p>
 
-          </div>
-
-          <button onClick={() => setActivePage("dashboard")}>
-            🏠 My Campus
-          </button>
-
-          <button onClick={() => setActivePage("listings")}>
-            📦 My Listings
-          </button>
-
-          <button onClick={() => setActivePage("wishlist")}>
-            ❤️ Wishlist
-          </button>
-
-          <button onClick={() => setActivePage("requests")}>
-            🛒 Purchase Requests
-          </button>
-
-          <button>
-            💬 Messages
-          </button>
-
-          <button onClick={() => setActivePage("settings")}>
-            ⚙ Settings
-          </button>
-
-          <button onClick={() => navigate("/")}>
-            🚪 Logout
-          </button>
+          <span className="verified-badge">
+            ✔ Verified Student
+          </span>
 
         </div>
 
-        <div className="dashboard">
+      </div>
 
-          {renderPage()}
+      <div className="campus-card">
 
-        </div>
+        <h2>📦 Purchase Requests</h2>
+
+        <p>
+          You don't have any purchase requests yet.
+        </p>
+
+      </div>
+
+      <div className="campus-card">
+
+        <h2>⚙️ Settings</h2>
+
+        <button
+          className="logout-btn"
+          onClick={handleLogout}
+        >
+          Logout
+        </button>
 
       </div>
 

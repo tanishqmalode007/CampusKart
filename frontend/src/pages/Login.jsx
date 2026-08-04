@@ -7,8 +7,8 @@ function Login() {
   const { login } = useAuth();
 
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
+const [password, setPassword] = useState("");
+const [showPassword, setShowPassword] = useState(false);
   const handleLogin = () => {
     if (email.trim() === "" || password.trim() === "") {
       alert("Please enter your email and password.");
@@ -48,14 +48,34 @@ function Login() {
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        <button onClick={handleLogin}>
-          Login
-        </button>
+       <a
+  href="#"
+  className="forgot-password"
+>
+  Forgot Password?
+</a>
 
-        <span>
-          Don't have an account?{" "}
-          <a href="/register">Register</a>
-        </span>
+<button
+  className="login-submit-btn"
+  onClick={handleLogin}
+>
+  Login
+</button>
+
+<div className="divider">
+  <span>OR</span>
+</div>
+
+<button className="google-login-btn">
+  Continue with Google
+</button>
+
+<p className="register-link">
+  Don't have an account?{" "}
+  <a href="/register">
+    Create Account
+  </a>
+</p>
 
       </div>
     </div>

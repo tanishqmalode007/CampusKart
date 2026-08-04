@@ -1,41 +1,44 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import { getProduct } from "../services/api";
-import LoginModal from "../components/LoginModal";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 function ProductDetails() {
   const navigate = useNavigate();
-  const { id } = useParams();
 
-  const { isLoggedIn } = useAuth();
+  const product = {
+    images: [
+      "https://picsum.photos/700/500?1",
+      "https://picsum.photos/700/500?2",
+      "https://picsum.photos/700/500?3",
+      "https://picsum.photos/700/500?4",
+      "https://picsum.photos/700/500?5",
+    ],
 
-  const [product, setProduct] = useState(null);
-  const [showModal, setShowModal] = useState(false);
+    name: "Engineering Mechanics Book",
 
-  useEffect(() => {
-    loadProduct();
-  }, []);
+    price: 350,
 
-  async function loadProduct() {
-    const data = await getProduct(id);
-    setProduct(data);
-  }
+    category: "Books",
 
-  const handleBuy = () => {
-    if (isLoggedIn) {
-      alert("Proceeding to Buy...");
-    } else {
-      setShowModal(true);
-    }
+    condition: "Good",
+
+    seller: "Rahul",
+
+    college: "PVG COE",
+
+    department: "IT",
+
+    description:
+      "Engineering Mechanics Book in excellent condition. No torn pages and very less used.",
+
+    location: "College Canteen",
   };
 
-  if (!product) {
-    return <h2>Loading...</h2>;
-  }
+  const [selectedImage, setSelectedImage] = useState(
+    product.images[0]
+  );
 
   return (
-    <div className="product-details">
+    <div className="details-container">
 
       <button
         className="back-btn"
@@ -44,47 +47,94 @@ function ProductDetails() {
         ← Back
       </button>
 
-      <div className="product-image">
-        <img
-          src={product.image}
-          alt={product.name}
-        />
+      <div className="image-gallery">
+
+        <div className="thumbnail-column">
+
+          {product.images.map((image, index) => (
+
+            <img
+              key={index}
+              src={image}
+              alt={`Preview ${index + 1}`}
+              className={`thumbnail ${
+                selectedImage === image
+                  ? "active-thumbnail"
+                  : ""
+              }`}
+              onClick={() =>
+                setSelectedImage(image)
+              }
+            />
+
+          ))}
+
+        </div>
+
+        <div className="main-image-container">
+
+          <img
+            src={selectedImage}
+            alt={product.name}
+            className="details-image"
+          />
+
+        </div>
+
       </div>
 
-      <div className="product-info">
+      <h1>{product.name}</h1>
 
-        <h1>{product.name}</h1>
+      <h2>₹{product.price}</h2>
 
-        <h2>₹{product.price}</h2>
+      <div className="details-info">
 
         <p>
-          <strong>Category:</strong> {product.category}
+          <strong>Category:</strong>{" "}
+          {product.category}
         </p>
 
         <p>
-          <strong>Location:</strong> {product.location}
+          <strong>Condition:</strong>{" "}
+          {product.condition}
         </p>
 
-        <hr />
+        <p>
+          <strong>Seller:</strong>{" "}
+          {product.seller}
+        </p>
 
-        <h3>Seller</h3>
+        <p>
+          <strong>College:</strong>{" "}
+          {product.college}
+        </p>
 
-        <p>{product.seller}</p>
-
-        <button
-          className="buy-btn"
-          onClick={handleBuy}
-        >
-          Buy Now
-        </button>
+        <p>
+          <strong>Department:</strong>{" "}
+          {product.department}
+        </p>
 
       </div>
 
-      <LoginModal
-        isOpen={showModal}
-        onClose={() => setShowModal(false)}
-        action="buy this product"
-      />
+      <div className="details-description">
+
+        <h3>Description</h3>
+
+        <p>{product.description}</p>
+
+      </div>
+
+      <div className="details-location">
+
+        <h3>Pickup Location</h3>
+
+        <p>{product.location}</p>
+
+      </div>
+
+      <button className="buy-btn">
+        Contact Seller
+      </button>
 
     </div>
   );

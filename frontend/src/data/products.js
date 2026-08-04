@@ -2,31 +2,53 @@ const products = [
   {
     id: 1,
     name: "Engineering Mechanics Book",
-    category: "Books",
     price: 350,
-    image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600",
-    seller: "User",
-    location: "IT Department"
+    category: "Books",
+    condition: "Good",
+    seller: "Rahul",
+    college: "PVG COE",
+    department: "IT",
+    location: "College Canteen",
+    description: "Excellent condition. No torn pages.",
+    images: [
+      "/products/book1.jpg",
+      "/products/book2.jpg",
+      "/products/book3.jpg"
+    ]
   },
 
   {
     id: 2,
-    name: "HP Laptop",
-    category: "Electronics",
-    price: 25000,
-    image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=600",
-    seller: "Rahul",
-    location: "Mechanical Building"
+    name: "Casio FX-991ES Calculator",
+    price: 850,
+    category: "Calculator",
+    condition: "Like New",
+    seller: "Priya",
+    college: "PVG COE",
+    department: "Computer",
+    location: "Library",
+    description: "Used for one semester only.",
+    images: [
+      "/products/calculator1.jpg",
+      "/products/calculator2.jpg"
+    ]
   },
 
   {
     id: 3,
-    name: "Casio Calculator",
-    category: "Calculator",
-    price: 650,
-    image: "https://images.unsplash.com/photo-1564866657310-4d0f4c5d6d94?w=600",
+    name: "HP Laptop",
+    price: 25000,
+    category: "Electronics",
+    condition: "Good",
     seller: "Amit",
-    location: "Library"
+    college: "PVG COE",
+    department: "ENTC",
+    location: "Main Gate",
+    description: "8GB RAM, 512GB SSD, i5 Processor.",
+    images: [
+      "/products/laptop1.jpg",
+      "/products/laptop2.jpg"
+    ]
   }
 ];
 

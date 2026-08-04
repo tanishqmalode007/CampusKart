@@ -1,15 +1,23 @@
 function SearchBar() {
   return (
-    <div className="search-section">
+    <section className="search-section">
+
       <h2>Find Student Essentials</h2>
 
-      <input
-        type="text"
-        placeholder="Search books, calculators, electronics..."
-      />
+      <div className="search-box">
 
-      <button>Search</button>
-    </div>
+        <input
+          type="text"
+          placeholder="Search books, calculators, electronics..."
+        />
+
+        <button>
+          Search
+        </button>
+
+      </div>
+
+    </section>
   );
 }
 

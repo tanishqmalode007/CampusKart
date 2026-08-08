@@ -8,6 +8,7 @@ function Navbar() {
   const { isLoggedIn, user, logout } = useAuth();
 
   const [showModal, setShowModal] = useState(false);
+
   const [showMenu, setShowMenu] = useState(false);
 
   const navigate = useNavigate();
@@ -35,30 +36,32 @@ function Navbar() {
           <span>CampusKart</span>
         </Link>
 
-       <ul className="nav-links desktop-nav">
-  <li>
-    <Link to="/">Home</Link>
-  </li>
+        <ul className="nav-links desktop-nav">
 
-  <li>
-    <Link to="/browse">Browse</Link>
-  </li>
+          <li>
+            <Link to="/">Home</Link>
+          </li>
 
-  <li>
-    <button
-      className="nav-link-btn"
-      onClick={handleSellClick}
-    >
-      Sell
-    </button>
-  </li>
+          <li>
+            <Link to="/browse">Browse</Link>
+          </li>
 
-  <li>
-    <Link to="/about">
-      About
-    </Link>
-  </li>
-</ul>
+          <li>
+            <button
+              className="nav-link-btn"
+              onClick={handleSellClick}
+            >
+              Sell
+            </button>
+          </li>
+
+          <li>
+            <Link to="/about">
+              About
+            </Link>
+          </li>
+
+        </ul>
 
         {!isLoggedIn ? (
 
@@ -87,20 +90,31 @@ function Navbar() {
               onClick={() => setShowMenu(!showMenu)}
             >
               <FaUserCircle size={24} />
-              user
+              {user?.displayName || "User"}
             </button>
 
             {showMenu && (
 
               <div className="dropdown-menu">
 
-                <button onClick={() => navigate("/My-Campus")}>
-                 My  Campus
+                <button onClick={() => navigate("/my-campus")}>
+                  My Campus
                 </button>
 
-                <button>My Listings</button>
+                <button
+                onClick={() => {
+                  navigate("/my-listings");
+                    setShowMenu(false);
+                  }}
+                  >
+                 My Listings
+                  </button>
 
-                <button>Wishlist</button>
+                <button
+                  onClick={() => alert("Coming Soon ❤️")}
+                >
+                  Wishlist
+                </button>
 
                 <button onClick={handleLogout}>
                   Logout
@@ -119,8 +133,10 @@ function Navbar() {
       <LoginModal
         isOpen={showModal}
         onClose={() => setShowModal(false)}
-        action="sell your products"
+        title="Login Required"
+        message="You need to login before selling your products on CampusKart."
       />
+
     </>
   );
 }

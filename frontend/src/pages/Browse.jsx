@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import ProductCard from "../components/ProductCard";
-import { getProducts } from "../services/api";
-
+import { getProducts } from "../services/productService";
 function Browse() {
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState("");
@@ -16,8 +15,10 @@ function Browse() {
   }
 
   const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(search.toLowerCase())
-  );
+  (product.title || "")
+    .toLowerCase()
+    .includes(search.toLowerCase())
+);
 
   return (
     <div className="browse-page">

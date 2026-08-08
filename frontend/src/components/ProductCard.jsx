@@ -22,23 +22,35 @@ function ProductCard({ product }) {
       <div className="product-card">
 
         <img
-          src={product.image}
-          alt={product.name}
+          src={
+            product.imageUrls?.length > 0
+              ? product.imageUrls[0]
+              : "https://placehold.co/600x400?text=CampusKart"
+          }
+          alt={product.title}
           className="product-image"
         />
 
         <div className="product-content">
 
-          <h3>{product.name}</h3>
+          <h3>{product.title}</h3>
 
           <h2>₹{product.price}</h2>
 
           <p className="seller">
-            👤 {product.seller}
+            👤 {product.ownerName}
           </p>
 
           <p className="location">
-            {product.category}
+            📚 {product.ownerDepartment} • {product.ownerYear}
+          </p>
+
+          <p className="location">
+            🏫 {product.ownerCollege}
+          </p>
+
+          <p className="location">
+            📍 {product.pickupLocation}
           </p>
 
           <div className="card-buttons">
@@ -53,7 +65,7 @@ function ProductCard({ product }) {
               className="buy-btn"
               onClick={handleBuy}
             >
-              Buy Now
+              Contact Seller
             </button>
 
           </div>
@@ -65,7 +77,7 @@ function ProductCard({ product }) {
       <LoginModal
         isOpen={showModal}
         onClose={() => setShowModal(false)}
-        action="buy this product"
+        action="contact this seller"
       />
     </>
   );

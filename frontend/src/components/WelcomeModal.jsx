@@ -1,29 +1,12 @@
-import { signInWithPopup } from "firebase/auth";
-import { auth, provider } from "../firebase";
 import { Link } from "react-router-dom";
-import heroImage from "../assets/hero.png";
-import { useAuth } from "../context/AuthContext";
+import { FaShoppingCart } from "react-icons/fa";
 
 function WelcomeModal({ isOpen, onClose }) {
-  const { isLoggedIn } = useAuth();
-
-  if (!isOpen || isLoggedIn) return null;
-
-  const handleGoogleLogin = async () => {
-    try {
-      const result = await signInWithPopup(auth, provider);
-
-      console.log("Logged in:", result.user);
-
-      onClose();
-    } catch (error) {
-      console.error(error);
-      alert(error.message);
-    }
-  };
+  if (!isOpen) return null;
 
   return (
     <div className="welcome-overlay">
+
       <div className="welcome-modal">
 
         <button
@@ -33,11 +16,11 @@ function WelcomeModal({ isOpen, onClose }) {
           ✕
         </button>
 
-        <img
-          src={heroImage}
-          alt="CampusKart"
-          className="welcome-image"
-        />
+        {/* CampusKart Cart Logo */}
+
+        <div className="welcome-logo">
+          <FaShoppingCart className="welcome-cart" />
+        </div>
 
         <h2>Welcome to CampusKart</h2>
 
@@ -45,17 +28,8 @@ function WelcomeModal({ isOpen, onClose }) {
           Buy • Sell • Exchange with verified students.
         </p>
 
-        <button
-          className="google-btn"
-          onClick={handleGoogleLogin}
-        >
-          <img
-            src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-            alt="Google"
-            className="google-icon"
-          />
-
-          <span>Continue with Google</span>
+        <button className="google-btn">
+          Continue with Google
         </button>
 
         <Link to="/login">
@@ -78,6 +52,7 @@ function WelcomeModal({ isOpen, onClose }) {
         </button>
 
       </div>
+
     </div>
   );
 }

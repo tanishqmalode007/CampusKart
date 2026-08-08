@@ -1,142 +1,179 @@
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+
+import { useAuth } from "../context/AuthContext";
+import LoginModal from "../components/LoginModal";
+
+import { getProduct } from "../services/productService";
 
 function ProductDetails() {
   const navigate = useNavigate();
+  const { id } = useParams();
 
-  const product = {
-    images: [
-      "https://picsum.photos/700/500?1",
-      "https://picsum.photos/700/500?2",
-      "https://picsum.photos/700/500?3",
-      "https://picsum.photos/700/500?4",
-      "https://picsum.photos/700/500?5",
-    ],
+  const { isLoggedIn } = useAuth();
 
-    name: "Engineering Mechanics Book",
+  const [showModal, setShowModal] = useState(false);
 
-    price: 350,
+  const [product, setProduct] = useState(null);
 
-    category: "Books",
+  const [selectedImage, setSelectedImage] =
+    useState("");
 
-    condition: "Good",
+  useEffect(() => {
+    loadProduct();
+  }, []);
 
-    seller: "Rahul",
+  async function loadProduct() {
+    const data = await getProduct(id);
 
-    college: "PVG COE",
+    setProduct(data);
 
-    department: "IT",
+    if (data?.imageUrls?.length > 0) {
+      setSelectedImage(data.imageUrls[0]);
+    }
+  }
 
-    description:
-      "Engineering Mechanics Book in excellent condition. No torn pages and very less used.",
+  const handleContactSeller = () => {
+    if (!isLoggedIn) {
+      setShowModal(true);
+      return;
+    }
 
-    location: "College Canteen",
+    alert(
+      "💬 Chat system will be added in the next module."
+    );
   };
 
-  const [selectedImage, setSelectedImage] = useState(
-    product.images[0]
-  );
-
-  return (
-    <div className="details-container">
-
-      <button
-        className="back-btn"
-        onClick={() => navigate(-1)}
+  if (!product) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "80vh",
+          fontSize: "24px",
+          fontWeight: "600",
+        }}
       >
-        ← Back
-      </button>
+        Loading Product...
+      </div>
+    );
+  }
+   return (
+    <>
+      <div className="details-container">
 
-      <div className="image-gallery">
+        <button
+          className="back-btn"
+          onClick={() => navigate(-1)}
+        >
+          ← Back
+        </button>
 
-        <div className="thumbnail-column">
+        <div className="image-gallery">
 
-          {product.images.map((image, index) => (
+          <div className="thumbnail-column">
+
+            {(product.imageUrls?.length > 0
+              ? product.imageUrls
+              : ["https://placehold.co/700x500?text=CampusKart"]
+            ).map((image, index) => (
+
+              <img
+                key={index}
+                src={image}
+                alt={`Preview ${index + 1}`}
+                className={`thumbnail ${
+                  selectedImage === image
+                    ? "active-thumbnail"
+                    : ""
+                }`}
+                onClick={() => setSelectedImage(image)}
+              />
+
+            ))}
+
+          </div>
+
+          <div className="main-image-container">
 
             <img
-              key={index}
-              src={image}
-              alt={`Preview ${index + 1}`}
-              className={`thumbnail ${
-                selectedImage === image
-                  ? "active-thumbnail"
-                  : ""
-              }`}
-              onClick={() =>
-                setSelectedImage(image)
+              src={
+                selectedImage ||
+                "https://placehold.co/700x500?text=CampusKart"
               }
+              alt={product.title}
+              className="details-image"
             />
 
-          ))}
+          </div>
 
         </div>
 
-        <div className="main-image-container">
+        <h1>{product.title}</h1>
 
-          <img
-            src={selectedImage}
-            alt={product.name}
-            className="details-image"
-          />
+        <h2>₹{product.price}</h2>
+
+        <div className="details-info">
+
+          <p>
+            <strong>Category:</strong> {product.category}
+          </p>
+
+          <p>
+            <strong>Condition:</strong> {product.condition}
+          </p>
+
+          <p>
+            <strong>Seller:</strong> {product.ownerName}
+          </p>
+
+          <p>
+            <strong>Department:</strong> {product.ownerDepartment}
+          </p>
+
+          <p>
+            <strong>Year:</strong> {product.ownerYear}
+          </p>
+
+          <p>
+            <strong>College:</strong> {product.ownerCollege}
+          </p>
 
         </div>
 
-      </div>
+        <div className="details-description">
 
-      <h1>{product.name}</h1>
+          <h3>Description</h3>
 
-      <h2>₹{product.price}</h2>
+          <p>{product.description}</p>
 
-      <div className="details-info">
+        </div>
 
-        <p>
-          <strong>Category:</strong>{" "}
-          {product.category}
-        </p>
+        <div className="details-location">
 
-        <p>
-          <strong>Condition:</strong>{" "}
-          {product.condition}
-        </p>
+          <h3>Pickup Location</h3>
 
-        <p>
-          <strong>Seller:</strong>{" "}
-          {product.seller}
-        </p>
+          <p>{product.pickupLocation}</p>
 
-        <p>
-          <strong>College:</strong>{" "}
-          {product.college}
-        </p>
+        </div>
 
-        <p>
-          <strong>Department:</strong>{" "}
-          {product.department}
-        </p>
+        <button
+          className="buy-btn"
+          onClick={handleContactSeller}
+        >
+          Contact Seller
+        </button>
 
       </div>
 
-      <div className="details-description">
-
-        <h3>Description</h3>
-
-        <p>{product.description}</p>
-
-      </div>
-
-      <div className="details-location">
-
-        <h3>Pickup Location</h3>
-
-        <p>{product.location}</p>
-
-      </div>
-
-      <button className="buy-btn">
-        Contact Seller
-      </button>
-
-    </div>
+      <LoginModal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        action="contact this seller"
+      />
+    </>
   );
 }
 

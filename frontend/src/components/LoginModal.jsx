@@ -1,17 +1,20 @@
 import { Link } from "react-router-dom";
 
-function LoginModal({ isOpen, onClose, action }) {
+function LoginModal({
+  isOpen,
+  onClose,
+  title = "Login Required",
+  message = "Please login to continue.",
+}) {
   if (!isOpen) return null;
 
   return (
     <div className="modal-overlay">
       <div className="login-modal">
 
-        <h2>Join CampusKart</h2>
+        <h2>{title}</h2>
 
-        <p>
-          Login or create an account to {action}.
-        </p>
+        <p>{message}</p>
 
         <div className="modal-benefits">
           <p>✅ Buy Products</p>
@@ -21,8 +24,11 @@ function LoginModal({ isOpen, onClose, action }) {
         </div>
 
         <div className="modal-buttons">
+
           <Link to="/login" onClick={onClose}>
-            <button className="login-btn">Login</button>
+            <button className="login-btn">
+              Login
+            </button>
           </Link>
 
           <Link to="/register" onClick={onClose}>
@@ -30,13 +36,14 @@ function LoginModal({ isOpen, onClose, action }) {
               Create Account
             </button>
           </Link>
+
         </div>
 
         <button
-          className="close-btn"
+          className="cancel-btn"
           onClick={onClose}
         >
-          Maybe Later
+          Continue as Guest
         </button>
 
       </div>

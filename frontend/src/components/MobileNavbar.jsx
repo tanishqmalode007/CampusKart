@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect } from "react";
+
+import LoginModal from "./LoginModal";import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   FaBars,
@@ -20,6 +21,7 @@ function MobileNavbar() {
   const [profileOpen, setProfileOpen] = useState(false);
 
   const navigate = useNavigate();
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   const profileRef = useRef(null);
 
@@ -47,6 +49,7 @@ function MobileNavbar() {
     setProfileOpen(false);
     navigate("/");
   };
+  
 
   return (
     <>
@@ -109,13 +112,13 @@ function MobileNavbar() {
                   🏫 My Campus
                 </button>
 
-                <button
-                  onClick={() => {
-                    alert("My Listings Coming Soon");
+               <button
+                    onClick={() => {
+                    navigate("/my-listings");
                     setProfileOpen(false);
-                  }}
-                >
-                  📦 My Listings
+                    }}
+                    >
+                        📦 My Listings
                 </button>
 
                 <button

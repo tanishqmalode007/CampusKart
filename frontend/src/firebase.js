@@ -6,6 +6,8 @@ import {
   setPersistence,
 } from "firebase/auth";
 
+import { getFirestore } from "firebase/firestore";
+
 const firebaseConfig = {
   apiKey: "AIzaSyDf2F-YYWMDsQ3brMaazfuq2P2rYN419Zc",
   authDomain: "campuskart-919e4.firebaseapp.com",
@@ -18,6 +20,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
+export const db = getFirestore(app);
 
 setPersistence(auth, browserLocalPersistence);
 

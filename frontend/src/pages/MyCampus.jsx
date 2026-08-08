@@ -2,22 +2,46 @@ import { useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
 
+import { useEffect, useState } from "react";
+
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../firebase";
+
 function MyCampus() {
   const navigate = useNavigate();
-  const { logout } = useAuth();
 
-  // Dummy user (Firebase later)
-  const user = {
-    name: "Student Name",
-    year: "Second Year",
-    department: "IT",
-    college: "PVG COE, Nashik",
-  };
+  const { user, logout } = useAuth();
 
-  const handleLogout = () => {
-    logout();
+  const [profile, setProfile] = useState(null);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (!user) return;
+
+      const docRef = doc(db, "users", user.uid);
+
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        setProfile(docSnap.data());
+      }
+    };
+
+    fetchProfile();
+  }, [user]);
+
+  const handleLogout = async () => {
+    await logout();
     navigate("/");
   };
+
+  if (!profile) {
+    return (
+      <div className="campus-container">
+        <h2>Loading...</h2>
+      </div>
+    );
+  }
 
   return (
     <div className="campus-container">
@@ -33,19 +57,40 @@ function MyCampus() {
 
         <FaUserCircle className="profile-avatar" />
 
-        <h2>{user.name}</h2>
+        <h2>{profile.fullName}</h2>
 
-        <div className="profile-info">
+       <div className="profile-info">
 
-          <p>📚 {user.year} • {user.department}</p>
+  <div className="info-item">
+    <strong>📧 Email</strong>
+    <p>{profile.email}</p>
+  </div>
 
-          <p>🏫 {user.college}</p>
+  <div className="info-item">
+    <strong>📱 Mobile</strong>
+    <p>{profile.mobile}</p>
+  </div>
 
-          <span className="verified-badge">
-            ✔ Verified Student
-          </span>
+  <div className="info-item">
+    <strong>🏫 College</strong>
+    <p>{profile.college}</p>
+  </div>
 
-        </div>
+  <div className="info-item">
+    <strong>🎓 Department</strong>
+    <p>{profile.department}</p>
+  </div>
+
+  <div className="info-item">
+    <strong>📚 Year</strong>
+    <p>{profile.year}</p>
+  </div>
+
+  <span className="verified-badge">
+    ✔ Verified Student
+  </span>
+
+</div>
 
       </div>
 

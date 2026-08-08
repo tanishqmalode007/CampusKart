@@ -565,6 +565,7 @@ ul{
 .sell-card button:hover{
     background:#0D47A1;
 }
+
 .logo{
     display:flex;
     align-items:center;
@@ -2164,4 +2165,99 @@ to{
 
     border:1px solid #81C784;
 
+}
+.welcome-logo{
+
+    width:180px;
+    height:180px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    margin:0 auto 25px;
+
+}
+
+.welcome-cart{
+
+    color:#1565C0;
+
+    font-size:140px;
+
+}
+.login-alert{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+
+    width:100%;
+
+    background:#E8F1FD;
+    color:#1565C0;
+
+    border:1px solid #BBDEFB;
+    border-left:5px solid #1565C0;
+
+    border-radius:12px;
+
+    padding:14px 18px;
+
+    margin:0 auto 22px;
+
+    font-size:15px;
+    font-weight:600;
+
+    box-sizing:border-box;
+}
+.profile-info{
+    margin-top:20px;
+    text-align:left;
+}
+
+.info-item{
+    margin-bottom:18px;
+    padding-bottom:12px;
+    border-bottom:1px solid #e5e5e5;
+}
+
+.info-item strong{
+    display:block;
+    color:#1565C0;
+    font-size:15px;
+    margin-bottom:4px;
+}
+
+.info-item p{
+    margin:0;
+    color:#333;
+    font-size:16px;
+}
+
+.verified-badge{
+    display:inline-block;
+    margin-top:15px;
+}
+.forgot-password{
+    margin-top:12px;
+    margin-bottom:20px;
+
+    color:#1565C0;
+
+    font-size:14px;
+    font-weight:600;
+
+    text-align:right;
+
+    cursor:pointer;
+
+    user-select:none;
+
+    transition:0.2s;
+}
+
+.forgot-password:hover{
+    text-decoration:underline;
+    color:#0D47A1;
 }

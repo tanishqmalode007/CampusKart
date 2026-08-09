@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 import { getBuyerRequests } from "../services/requestService";
@@ -155,27 +154,53 @@ function MyPurchaseRequests() {
                   ₹{request.productPrice}
 
                 </h2>
-
                 <p>
 
-                  Status :
+  <strong>Product Status:</strong>{" "}
 
-                  <strong>
+  {request.product?.status === "Available" &&
+    "🟢 Available"}
 
-                    {" "}
+  {request.product?.status === "Reserved" &&
+    "🟡 Reserved"}
 
-                    {request.status === "Pending" &&
-                      "🟡 Pending"}
+  {request.product?.status === "Sold" &&
+    "🔴 Sold"}
 
-                    {request.status === "Accepted" &&
-                      "🟢 Accepted"}
+</p>
 
-                    {request.status === "Rejected" &&
-                      "🔴 Rejected"}
+                <p>
+  <strong>Status:</strong>{" "}
 
-                  </strong>
+  {request.status === "Pending" && "🟡 Pending"}
 
-                </p>
+  {request.status === "Accepted" && "🟢 Accepted"}
+
+  {request.status === "Rejected" && "🔴 Rejected"}
+
+</p>
+
+{request.status === "Pending" && (
+  <p
+    style={{
+      color: "#777",
+      marginTop: "8px",
+    }}
+  >
+    Waiting for seller to respond...
+  </p>
+)}
+
+{request.status === "Rejected" && (
+  <p
+    style={{
+      color: "red",
+      marginTop: "8px",
+    }}
+  >
+    Seller rejected your request.
+  </p>
+)}
 
                 {request.status === "Accepted" && (
 
@@ -190,27 +215,39 @@ function MyPurchaseRequests() {
                     </h4>
 
                     <p>
+  👤 {request.sellerName}
+</p>
 
-                      👤 {request.seller.fullName}
+<p>
+  📧 {request.sellerEmail}
+</p>
 
-                    </p>
-
-                    <p>
-
-                      📧 {request.seller.email}
-
-                    </p>
-
-                    <p>
-
-                      📱 {request.seller.mobile}
-
-                    </p>
-
+<p>
+  📱 {request.sellerMobile}
+</p>
                   </>
 
                 )}
+<div
+  style={{
+    marginTop: "15px",
+  }}
+>
 
+  <Link to={`/product/${request.productId}`}>
+
+    <button
+      className="view-btn"
+      style={{
+        width: "100%",
+      }}
+    >
+      View Product
+    </button>
+
+  </Link>
+
+</div>
               </div>
 
             </div>

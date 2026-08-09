@@ -27,7 +27,7 @@ export const sendRequest = async ({
   productId,
 }) => {
 
-  // Product
+  // Get Product
   const productSnap = await getDoc(
     doc(db, "products", productId)
   );
@@ -43,11 +43,11 @@ export const sendRequest = async ({
 
   if (product.status !== "Available") {
     throw new Error(
-      "Product is no longer available."
+      "This product is no longer available."
     );
   }
 
-  // Buyer
+  // Get Buyer
   const buyerSnap = await getDoc(
     doc(db, "users", buyerId)
   );
@@ -58,7 +58,18 @@ export const sendRequest = async ({
 
   const buyer = buyerSnap.data();
 
-  // Duplicate check
+  // Get Seller
+  const sellerSnap = await getDoc(
+    doc(db, "users", sellerId)
+  );
+
+  if (!sellerSnap.exists()) {
+    throw new Error("Seller not found.");
+  }
+
+  const seller = sellerSnap.data();
+
+  // Check Duplicate Request
   const q = query(
     collection(db, "purchaseRequests"),
     where("buyerId", "==", buyerId),
@@ -71,6 +82,7 @@ export const sendRequest = async ({
     throw new Error("Request already sent.");
   }
 
+  // Create Request
   await addDoc(
     collection(db, "purchaseRequests"),
     {
@@ -80,10 +92,15 @@ export const sendRequest = async ({
       buyerMobile: buyer.mobile,
 
       sellerId,
+      sellerName: seller.fullName,
+      sellerEmail: seller.email,
+      sellerMobile: seller.mobile,
 
       productId,
       productTitle: product.title,
       productPrice: product.price,
+      productImage:
+        product.imageUrls?.[0] || "",
 
       status: "Pending",
 
@@ -135,7 +152,7 @@ export const getBuyerRequests = async (
 };
 
 // ======================================
-// Accept
+// Accept Request
 // ======================================
 
 export const acceptRequest = async (
@@ -157,7 +174,7 @@ export const acceptRequest = async (
 };
 
 // ======================================
-// Reject
+// Reject Request
 // ======================================
 
 export const rejectRequest = async (
@@ -177,8 +194,9 @@ export const rejectRequest = async (
 // Cancel Reservation
 // ======================================
 
-export const cancelReservation =
-async (productId) => {
+export const cancelReservation = async (
+  productId
+) => {
 
   await makeAvailable(productId);
 

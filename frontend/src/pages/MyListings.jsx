@@ -9,12 +9,19 @@ import {
   markSold,
 } from "../services/productService";
 
+import {
+  getSellerRequests,
+  acceptRequest,
+  rejectRequest,
+} from "../services/requestService";
+
 function MyListings() {
   const navigate = useNavigate();
 
   const { user } = useAuth();
 
   const [products, setProducts] = useState([]);
+  const [requests, setRequests] = useState([]);
 
   const [loading, setLoading] = useState(true);
 
@@ -22,13 +29,19 @@ function MyListings() {
     loadProducts();
   }, []);
 
-  async function loadProducts() {
-    const data = await getMyProducts(user.uid);
+ async function loadProducts() {
 
-    setProducts(data);
+  const productData = await getMyProducts(user.uid);
 
-    setLoading(false);
-  }
+  const requestData = await getSellerRequests(user.uid);
+
+  setProducts(productData);
+
+  setRequests(requestData);
+
+  setLoading(false);
+
+}
 
   async function handleDelete(id) {
     const confirmDelete = window.confirm(
@@ -109,12 +122,94 @@ function MyListings() {
                 <h2>₹{product.price}</h2>
 
                 <p>
-                  Status :
-                  <strong>
-                    {" "}
-                    {product.status}
-                  </strong>
-                </p>
+
+Status :
+
+<strong>
+
+{product.status === "Available" && "🟢 Available"}
+
+{product.status === "Reserved" && "🟡 Reserved"}
+
+{product.status === "Sold" && "🔴 Sold"}
+
+</strong>
+
+</p>
+                <div className="request-section">
+
+  <h4>
+    Purchase Requests
+  </h4>
+
+  {requests
+    .filter(
+      (r) => r.productId === product.id
+    )
+    .map((request) => (
+
+      <div
+        key={request.id}
+        className="request-card"
+      >
+
+        <p>
+  👤 {request.buyerName || "Unknown Buyer"}
+</p>
+
+<p>
+  📧 {request.buyerEmail}
+</p>
+
+<p>
+  📱 {request.buyerMobile}
+</p>
+
+        <p>
+          {request.status}
+        </p>
+
+        {request.status === "Pending" && (
+
+          <div
+            className="request-buttons"
+          >
+
+            <button
+              onClick={async () => {
+
+                await acceptRequest(request);
+
+await loadProducts();
+
+              }}
+            >
+              Accept
+            </button>
+
+            <button
+              onClick={async () => {
+
+                await rejectRequest(
+                  request
+                );
+
+                loadProducts();
+
+              }}
+            >
+              Reject
+            </button>
+
+          </div>
+
+        )}
+
+      </div>
+
+    ))}
+
+</div>
 
                 <div className="card-buttons">
 
@@ -129,7 +224,8 @@ function MyListings() {
                     View
                   </button>
 
-                  {product.status !== "Sold" && (
+                  {product.status !== "Sold" &&
+                    product.status !== "Reserved" && (
 
                     <button
                       className="buy-btn"

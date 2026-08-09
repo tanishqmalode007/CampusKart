@@ -9,6 +9,7 @@ import {
   getDoc,
   deleteDoc,
   updateDoc,
+  orderBy,
 } from "firebase/firestore";
 
 import { db } from "../firebase";
@@ -22,8 +23,10 @@ export const publishProduct = async (product) => {
     collection(db, "products"),
     {
       ...product,
-      createdAt: serverTimestamp(),
       status: "Available",
+      reservedFor: null,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
     }
   );
 
@@ -35,9 +38,12 @@ export const publishProduct = async (product) => {
 // =========================
 
 export const getProducts = async () => {
-  const snapshot = await getDocs(
-    collection(db, "products")
+  const q = query(
+    collection(db, "products"),
+    orderBy("createdAt", "desc")
   );
+
+  const snapshot = await getDocs(q);
 
   return snapshot.docs.map((doc) => ({
     id: doc.id,
@@ -50,20 +56,18 @@ export const getProducts = async () => {
 // =========================
 
 export const getProduct = async (id) => {
-  const snapshot = await getDoc(
-    doc(db, "products", id)
-  );
+  const snap = await getDoc(doc(db, "products", id));
 
-  if (!snapshot.exists()) return null;
+  if (!snap.exists()) return null;
 
   return {
-    id: snapshot.id,
-    ...snapshot.data(),
+    id: snap.id,
+    ...snap.data(),
   };
 };
 
 // =========================
-// My Listings
+// Seller Listings
 // =========================
 
 export const getMyProducts = async (uid) => {
@@ -81,12 +85,20 @@ export const getMyProducts = async (uid) => {
 };
 
 // =========================
-// Delete Product
+// Reserve Product
 // =========================
 
-export const deleteProduct = async (id) => {
-  await deleteDoc(
-    doc(db, "products", id)
+export const reserveProduct = async (
+  productId,
+  buyerId
+) => {
+  await updateDoc(
+    doc(db, "products", productId),
+    {
+      status: "Reserved",
+      reservedFor: buyerId,
+      updatedAt: serverTimestamp(),
+    }
   );
 };
 
@@ -94,11 +106,43 @@ export const deleteProduct = async (id) => {
 // Mark Sold
 // =========================
 
-export const markSold = async (id) => {
+export const markSold = async (
+  productId
+) => {
   await updateDoc(
-    doc(db, "products", id),
+    doc(db, "products", productId),
     {
       status: "Sold",
+      updatedAt: serverTimestamp(),
     }
+  );
+};
+
+// =========================
+// Make Available Again
+// =========================
+
+export const makeAvailable = async (
+  productId
+) => {
+  await updateDoc(
+    doc(db, "products", productId),
+    {
+      status: "Available",
+      reservedFor: null,
+      updatedAt: serverTimestamp(),
+    }
+  );
+};
+
+// =========================
+// Delete Product
+// =========================
+
+export const deleteProduct = async (
+  productId
+) => {
+  await deleteDoc(
+    doc(db, "products", productId)
   );
 };

@@ -7,43 +7,98 @@ import {
   getDocs,
   doc,
   updateDoc,
+  getDoc,
 } from "firebase/firestore";
 
 import { db } from "../firebase";
 
-// =============================
+import {
+  reserveProduct,
+  makeAvailable,
+} from "./productService";
+
+// ======================================
 // Send Purchase Request
-// =============================
+// ======================================
 
-export const sendRequest = async (request) => {
+export const sendRequest = async ({
+  buyerId,
+  sellerId,
+  productId,
+}) => {
 
-  const q = query(
-    collection(db, "purchaseRequests"),
-    where("buyerId", "==", request.buyerId),
-    where("productId", "==", request.productId)
+  // Product
+  const productSnap = await getDoc(
+    doc(db, "products", productId)
   );
 
-  const snapshot = await getDocs(q);
+  if (!productSnap.exists()) {
+    throw new Error("Product not found.");
+  }
 
-  if (!snapshot.empty) {
+  const product = {
+    id: productSnap.id,
+    ...productSnap.data(),
+  };
+
+  if (product.status !== "Available") {
+    throw new Error(
+      "Product is no longer available."
+    );
+  }
+
+  // Buyer
+  const buyerSnap = await getDoc(
+    doc(db, "users", buyerId)
+  );
+
+  if (!buyerSnap.exists()) {
+    throw new Error("Buyer not found.");
+  }
+
+  const buyer = buyerSnap.data();
+
+  // Duplicate check
+  const q = query(
+    collection(db, "purchaseRequests"),
+    where("buyerId", "==", buyerId),
+    where("productId", "==", productId)
+  );
+
+  const existing = await getDocs(q);
+
+  if (!existing.empty) {
     throw new Error("Request already sent.");
   }
 
   await addDoc(
     collection(db, "purchaseRequests"),
     {
-      ...request,
+      buyerId,
+      buyerName: buyer.fullName,
+      buyerEmail: buyer.email,
+      buyerMobile: buyer.mobile,
+
+      sellerId,
+
+      productId,
+      productTitle: product.title,
+      productPrice: product.price,
+
       status: "Pending",
+
       createdAt: serverTimestamp(),
     }
   );
 };
 
-// =============================
+// ======================================
 // Seller Requests
-// =============================
+// ======================================
 
-export const getSellerRequests = async (sellerId) => {
+export const getSellerRequests = async (
+  sellerId
+) => {
 
   const q = query(
     collection(db, "purchaseRequests"),
@@ -52,17 +107,19 @@ export const getSellerRequests = async (sellerId) => {
 
   const snapshot = await getDocs(q);
 
-  return snapshot.docs.map(doc => ({
+  return snapshot.docs.map((doc) => ({
     id: doc.id,
     ...doc.data(),
   }));
 };
 
-// =============================
+// ======================================
 // Buyer Requests
-// =============================
+// ======================================
 
-export const getBuyerRequests = async (buyerId) => {
+export const getBuyerRequests = async (
+  buyerId
+) => {
 
   const q = query(
     collection(db, "purchaseRequests"),
@@ -71,38 +128,58 @@ export const getBuyerRequests = async (buyerId) => {
 
   const snapshot = await getDocs(q);
 
-  return snapshot.docs.map(doc => ({
+  return snapshot.docs.map((doc) => ({
     id: doc.id,
     ...doc.data(),
   }));
 };
 
-// =============================
-// Accept Request
-// =============================
+// ======================================
+// Accept
+// ======================================
 
-export const acceptRequest = async (id) => {
+export const acceptRequest = async (
+  request
+) => {
 
   await updateDoc(
-    doc(db, "purchaseRequests", id),
+    doc(db, "purchaseRequests", request.id),
     {
       status: "Accepted",
     }
   );
 
+  await reserveProduct(
+    request.productId,
+    request.buyerId
+  );
+
 };
 
-// =============================
-// Reject Request
-// =============================
+// ======================================
+// Reject
+// ======================================
 
-export const rejectRequest = async (id) => {
+export const rejectRequest = async (
+  request
+) => {
 
   await updateDoc(
-    doc(db, "purchaseRequests", id),
+    doc(db, "purchaseRequests", request.id),
     {
       status: "Rejected",
     }
   );
+
+};
+
+// ======================================
+// Cancel Reservation
+// ======================================
+
+export const cancelReservation =
+async (productId) => {
+
+  await makeAvailable(productId);
 
 };

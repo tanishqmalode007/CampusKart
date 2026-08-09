@@ -103,12 +103,21 @@ function Navbar() {
 
                 <button
                 onClick={() => {
-                  navigate("/my-listings");
-                    setShowMenu(false);
+                navigate("/my-listings");
+                setShowMenu(false);
                   }}
                   >
-                 My Listings
-                  </button>
+                  My Listings
+                  </button> 
+                  
+                  <button
+                  onClick={() => {
+                  navigate("/my-purchase-requests");
+                    setShowMenu(false);
+                      }}
+                      >
+                        My Purchase Requests
+                        </button>
 
                 <button
                   onClick={() => alert("Coming Soon ❤️")}

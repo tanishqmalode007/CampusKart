@@ -120,6 +120,14 @@ function MobileNavbar() {
                     >
                         📦 My Listings
                 </button>
+                <button
+  onClick={() => {
+    navigate("/my-purchase-requests");
+    setProfileOpen(false);
+  }}
+>
+  🛒 My Requests
+</button>
 
                 <button
                   onClick={() => {

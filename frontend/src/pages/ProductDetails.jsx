@@ -2,27 +2,28 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 import { useAuth } from "../context/AuthContext";
-import { sendRequest } from "../services/requestService";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../firebase";import LoginModal from "../components/LoginModal";
+import LoginModal from "../components/LoginModal";
 
 import { getProduct } from "../services/productService";
+import { sendRequest } from "../services/requestService";
 
 function ProductDetails() {
   const navigate = useNavigate();
   const { id } = useParams();
 
-const { isLoggedIn, user } = useAuth();
+  const { isLoggedIn, user } = useAuth();
+
   const [showModal, setShowModal] = useState(false);
 
   const [product, setProduct] = useState(null);
 
-  const [selectedImage, setSelectedImage] =
-    useState("");
+  const [selectedImage, setSelectedImage] = useState("");
+
+  const [sending, setSending] = useState(false);
 
   useEffect(() => {
     loadProduct();
-  }, []);
+  }, [id]);
 
   async function loadProduct() {
     const data = await getProduct(id);
@@ -34,36 +35,44 @@ const { isLoggedIn, user } = useAuth();
     }
   }
 
-  const handleContactSeller = async () => {
-  if (!isLoggedIn) {
-    setShowModal(true);
-    return;
+  async function handlePurchaseRequest() {
+
+    if (!isLoggedIn) {
+      setShowModal(true);
+      return;
+    }
+
+    if (user.uid === product.ownerId) {
+      alert("You can't request your own product.");
+      return;
+    }
+
+    if (product.status !== "Available") {
+      alert("This product is no longer available.");
+      return;
+    }
+
+    try {
+
+      setSending(true);
+
+      await sendRequest({
+        buyerId: user.uid,
+        sellerId: product.ownerId,
+        productId: product.id,
+      });
+
+      alert("✅ Purchase Request Sent");
+
+    } catch (error) {
+
+      alert(error.message);
+
+    }
+
+    setSending(false);
   }
 
-  if (user.uid === product.ownerId) {
-    alert("You can't send a request to your own product.");
-    return;
-  }
-
-  try {
-    const userSnap = await getDoc(
-      doc(db, "users", user.uid)
-    );
-
-    const buyer = userSnap.data();
-
-    await sendRequest({
-      buyerId: user.uid,
-      sellerId: product.ownerId,
-      productId: product.id,
-    });
-
-    alert("✅ Purchase request sent successfully.");
-
-  } catch (error) {
-    alert(error.message);
-  }
-};
   if (!product) {
     return (
       <div
@@ -72,15 +81,16 @@ const { isLoggedIn, user } = useAuth();
           justifyContent: "center",
           alignItems: "center",
           height: "80vh",
-          fontSize: "24px",
+          fontSize: "22px",
           fontWeight: "600",
         }}
       >
-        Loading Product...
+        Loading...
       </div>
     );
   }
-   return (
+
+  return (
     <>
       <div className="details-container">
 
@@ -95,7 +105,7 @@ const { isLoggedIn, user } = useAuth();
 
           <div className="thumbnail-column">
 
-            {(product.imageUrls?.length > 0
+            {(product.imageUrls?.length
               ? product.imageUrls
               : ["https://placehold.co/700x500?text=CampusKart"]
             ).map((image, index) => (
@@ -103,13 +113,15 @@ const { isLoggedIn, user } = useAuth();
               <img
                 key={index}
                 src={image}
-                alt={`Preview ${index + 1}`}
+                alt=""
                 className={`thumbnail ${
                   selectedImage === image
                     ? "active-thumbnail"
                     : ""
                 }`}
-                onClick={() => setSelectedImage(image)}
+                onClick={() =>
+                  setSelectedImage(image)
+                }
               />
 
             ))}
@@ -123,7 +135,7 @@ const { isLoggedIn, user } = useAuth();
                 selectedImage ||
                 "https://placehold.co/700x500?text=CampusKart"
               }
-              alt={product.title}
+              alt=""
               className="details-image"
             />
 
@@ -135,31 +147,27 @@ const { isLoggedIn, user } = useAuth();
 
         <h2>₹{product.price}</h2>
 
+        <h3>
+          Status :
+          {" "}
+          {product.status === "Available" && "🟢 Available"}
+          {product.status === "Reserved" && "🟡 Reserved"}
+          {product.status === "Sold" && "🔴 Sold"}
+        </h3>
+
         <div className="details-info">
 
-          <p>
-            <strong>Category:</strong> {product.category}
-          </p>
+          <p><strong>Category :</strong> {product.category}</p>
 
-          <p>
-            <strong>Condition:</strong> {product.condition}
-          </p>
+          <p><strong>Condition :</strong> {product.condition}</p>
 
-          <p>
-            <strong>Seller:</strong> {product.ownerName}
-          </p>
+          <p><strong>Seller :</strong> {product.ownerName}</p>
 
-          <p>
-            <strong>Department:</strong> {product.ownerDepartment}
-          </p>
+          <p><strong>Department :</strong> {product.ownerDepartment}</p>
 
-          <p>
-            <strong>Year:</strong> {product.ownerYear}
-          </p>
+          <p><strong>Year :</strong> {product.ownerYear}</p>
 
-          <p>
-            <strong>College:</strong> {product.ownerCollege}
-          </p>
+          <p><strong>College :</strong> {product.ownerCollege}</p>
 
         </div>
 
@@ -181,9 +189,17 @@ const { isLoggedIn, user } = useAuth();
 
         <button
           className="buy-btn"
-          onClick={handleContactSeller}
+          disabled={
+            sending ||
+            product.status !== "Available"
+          }
+          onClick={handlePurchaseRequest}
         >
-          Send Purchase Request
+          {product.status === "Available"
+            ? sending
+              ? "Sending..."
+              : "Send Purchase Request"
+            : product.status}
         </button>
 
       </div>
@@ -191,8 +207,9 @@ const { isLoggedIn, user } = useAuth();
       <LoginModal
         isOpen={showModal}
         onClose={() => setShowModal(false)}
-        action="contact this seller"
+        action="send a purchase request"
       />
+
     </>
   );
 }

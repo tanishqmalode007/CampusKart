@@ -154,7 +154,8 @@ setRequests(requestData);
             <button
               onClick={async () => {
                 await acceptRequest(
-                  request.id
+                 request.id,
+                  request.productId
                 );
 
                 window.location.reload();

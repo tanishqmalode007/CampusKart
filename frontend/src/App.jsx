@@ -4,7 +4,7 @@ import MyListings from "./pages/MyListings";
 import Navbar from "./components/Navbar";
 import MobileNavbar from "./components/MobileNavbar";
 import ProtectedRoute from "./components/ProtectedRoute";
-
+import MyPurchaseRequest from "./pages/MyPurchaseRequest";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -59,7 +59,10 @@ function App() {
             </ProtectedRoute>
           }
         />
-
+          <Route
+  path="/my-purchase-requests"
+  element={<MyPurchaseRequest />}
+/>
         <Route
           path="/my-campus"
           element={

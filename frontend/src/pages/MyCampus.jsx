@@ -4,6 +4,13 @@ import { useAuth } from "../context/AuthContext";
 
 import { useEffect, useState } from "react";
 
+import {
+  getSellerRequests,
+  acceptRequest,
+  rejectRequest,
+} from "../services/requestService";
+
+import { getProduct } from "../services/productService";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
 
@@ -13,6 +20,7 @@ function MyCampus() {
   const { user, logout } = useAuth();
 
   const [profile, setProfile] = useState(null);
+const [requests, setRequests] = useState([]);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -24,6 +32,20 @@ function MyCampus() {
 
       if (docSnap.exists()) {
         setProfile(docSnap.data());
+        const data = await getSellerRequests(user.uid);
+
+const requestData = await Promise.all(
+  data.map(async (request) => {
+    const product = await getProduct(request.productId);
+
+    return {
+      ...request,
+      product,
+    };
+  })
+);
+
+setRequests(requestData);
       }
     };
 
@@ -96,13 +118,74 @@ function MyCampus() {
 
       <div className="campus-card">
 
-        <h2>📦 Purchase Requests</h2>
+  <h2>
+    📦 Purchase Requests ({requests.length})
+  </h2>
+
+  {requests.length === 0 ? (
+
+    <p>No purchase requests yet.</p>
+
+  ) : (
+
+    requests.map((request) => (
+
+      <div
+        key={request.id}
+        className="request-card"
+      >
+
+        <h3>
+          {request.product?.title}
+        </h3>
 
         <p>
-          You don't have any purchase requests yet.
+          Status :
+          <strong>
+            {" "}
+            {request.status}
+          </strong>
         </p>
 
+        {request.status === "Pending" && (
+
+          <div className="request-buttons">
+
+            <button
+              onClick={async () => {
+                await acceptRequest(
+                  request.id
+                );
+
+                window.location.reload();
+              }}
+            >
+              Accept
+            </button>
+
+            <button
+              onClick={async () => {
+                await rejectRequest(
+                  request.id
+                );
+
+                window.location.reload();
+              }}
+            >
+              Reject
+            </button>
+
+          </div>
+
+        )}
+
       </div>
+
+    ))
+
+  )}
+
+</div>
 
       <div className="campus-card">
 

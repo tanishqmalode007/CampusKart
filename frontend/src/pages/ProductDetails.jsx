@@ -2,7 +2,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 import { useAuth } from "../context/AuthContext";
-import LoginModal from "../components/LoginModal";
+import { sendRequest } from "../services/requestService";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../firebase";import LoginModal from "../components/LoginModal";
 
 import { getProduct } from "../services/productService";
 
@@ -10,8 +12,7 @@ function ProductDetails() {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const { isLoggedIn } = useAuth();
-
+const { isLoggedIn, user } = useAuth();
   const [showModal, setShowModal] = useState(false);
 
   const [product, setProduct] = useState(null);
@@ -33,17 +34,36 @@ function ProductDetails() {
     }
   }
 
-  const handleContactSeller = () => {
-    if (!isLoggedIn) {
-      setShowModal(true);
-      return;
-    }
+  const handleContactSeller = async () => {
+  if (!isLoggedIn) {
+    setShowModal(true);
+    return;
+  }
 
-    alert(
-      "💬 Chat system will be added in the next module."
+  if (user.uid === product.ownerId) {
+    alert("You can't send a request to your own product.");
+    return;
+  }
+
+  try {
+    const userSnap = await getDoc(
+      doc(db, "users", user.uid)
     );
-  };
 
+    const buyer = userSnap.data();
+
+    await sendRequest({
+      buyerId: user.uid,
+      sellerId: product.ownerId,
+      productId: product.id,
+    });
+
+    alert("✅ Purchase request sent successfully.");
+
+  } catch (error) {
+    alert(error.message);
+  }
+};
   if (!product) {
     return (
       <div
@@ -163,7 +183,7 @@ function ProductDetails() {
           className="buy-btn"
           onClick={handleContactSeller}
         >
-          Contact Seller
+          Send Purchase Request
         </button>
 
       </div>

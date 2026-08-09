@@ -8,6 +8,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
 
 import { publishProduct } from "../services/productService";
+import { uploadImages } from "../services/imageService";
 
 function Sell() {
   const navigate = useNavigate();
@@ -66,7 +67,7 @@ function Sell() {
 
     try {
       setLoading(true);
-
+        const imageUrls = await uploadImages(images);
       await publishProduct({
         ownerId: user.uid,
 
@@ -89,11 +90,9 @@ function Sell() {
         description,
 
         pickupLocation,
-
-        imageUrls: images.map((img) =>
-          URL.createObjectURL(img)
-        ),
-      });
+        
+        imageUrls,
+        });
 
       alert("🎉 Product Published Successfully!");
 

@@ -36,7 +36,7 @@ function Home() {
       <Hero />
       <SearchBar />
       <Categories />
-      <FeaturedProducts />
+    
       <Footer />
 
     </>

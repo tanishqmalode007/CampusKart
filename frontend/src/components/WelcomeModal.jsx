@@ -28,9 +28,7 @@ function WelcomeModal({ isOpen, onClose }) {
           Buy • Sell • Exchange with verified students.
         </p>
 
-        <button className="google-btn">
-          Continue with Google
-        </button>
+        
 
         <Link to="/login">
           <button className="login-btn">

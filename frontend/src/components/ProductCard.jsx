@@ -9,52 +9,61 @@ function ProductCard({ product }) {
 
   const [showModal, setShowModal] = useState(false);
 
-  const handleBuy = () => {
-    if (isLoggedIn) {
-      navigate(`/product/${product.id}`);
-    } else {
+  const image =
+    product.imageUrls?.find(
+      (url) => typeof url === "string" && url.trim() !== ""
+    ) || null;
+
+  const handleContactSeller = () => {
+    if (!isLoggedIn) {
       setShowModal(true);
+      return;
     }
+
+    navigate(`/product/${product.id}`);
   };
 
   return (
     <>
       <div className="product-card">
 
-        <img
-          src={
-            product.imageUrls?.length > 0
-              ? product.imageUrls[0]
-              : "https://placehold.co/600x400?text=CampusKart"
-          }
-          alt={product.title}
-          className="product-image"
-        />
+        {image ? (
+          <img
+            src={image}
+            alt={product.title || "Product"}
+            className="product-image"
+          />
+        ) : (
+          <div className="product-image no-image">
+            No Image Available
+          </div>
+        )}
 
         <div className="product-content">
 
           <h3>{product.title}</h3>
+
           <div className="status-badge">
 
-  {product.status === "Available" && (
-    <span className="available-badge">
-      🟢 Available
-    </span>
-  )}
+            {product.status === "Available" && (
+              <span className="available-badge">
+                🟢 Available
+              </span>
+            )}
 
-  {product.status === "Reserved" && (
-    <span className="reserved-badge">
-      🟡 Reserved
-    </span>
-  )}
+            {product.status === "Reserved" && (
+              <span className="reserved-badge">
+                🟡 Reserved
+              </span>
+            )}
 
-  {product.status === "Sold" && (
-    <span className="sold-badge">
-      🔴 Sold
-    </span>
-  )}
+            {product.status === "Sold" && (
+              <span className="sold-badge">
+                🔴 Sold
+              </span>
+            )}
 
-</div>
+          </div>
 
           <h2>₹{product.price}</h2>
 
@@ -81,14 +90,16 @@ function ProductCard({ product }) {
                 View Details
               </button>
             </Link>
-<button
-    className="buy-btn"
-    disabled={product.status !== "Available"}
->
-    {product.status === "Available"
-        ? "Contact Seller"
-        : product.status}
-</button>
+
+            <button
+              className="buy-btn"
+              disabled={product.status !== "Available"}
+              onClick={handleContactSeller}
+            >
+              {product.status === "Available"
+                ? "Contact Seller"
+                : product.status}
+            </button>
 
           </div>
 

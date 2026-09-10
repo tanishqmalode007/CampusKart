@@ -2289,3 +2289,13 @@ to{
     background:#fee2e2;
     color:#991b1b;
 }
+
+.no-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f1f1f1;
+  color: #777;
+  font-size: 18px;
+  font-weight: 600;
+}

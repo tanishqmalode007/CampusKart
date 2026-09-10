@@ -18,7 +18,7 @@ function Home() {
     setShowModal(true);
   } else {
     setShowModal(false);
-  }
+  }   
 }, [isLoggedIn]);
 
   const closeModal = () => {

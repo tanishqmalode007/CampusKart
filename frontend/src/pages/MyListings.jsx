@@ -138,9 +138,15 @@ Status :
 </p>
                 <div className="request-section">
 
-  <h4>
-    Purchase Requests
-  </h4>
+ <h4>
+    Purchase Requests (
+    {
+      requests.filter(
+        (r) => r.productId === product.id
+      ).length
+    }
+    )
+</h4>
 
   {requests
     .filter(
@@ -176,30 +182,34 @@ Status :
           >
 
             <button
-              onClick={async () => {
+className="accept-btn"
+onClick={async()=>{
 
-                await acceptRequest(request);
+await acceptRequest(request);
+
+alert("Buyer Accepted ✅");
 
 await loadProducts();
 
-              }}
-            >
-              Accept
-            </button>
+}}
+>
+Accept
+</button>
 
             <button
-              onClick={async () => {
+className="reject-btn"
+onClick={async()=>{
 
-                await rejectRequest(
-                  request
-                );
+await rejectRequest(request);
 
-                loadProducts();
+alert("Buyer Rejected");
 
-              }}
-            >
-              Reject
-            </button>
+await loadProducts();
+
+}}
+>
+Reject
+</button>
 
           </div>
 
@@ -224,8 +234,7 @@ await loadProducts();
                     View
                   </button>
 
-                  {product.status !== "Sold" &&
-                    product.status !== "Reserved" && (
+                  {product.status === "Reserved" && (
 
                     <button
                       className="buy-btn"

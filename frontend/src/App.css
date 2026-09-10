@@ -2261,3 +2261,31 @@ to{
     text-decoration:underline;
     color:#0D47A1;
 }
+.status-badge{
+    margin:8px 0 12px;
+}
+
+.available-badge,
+.reserved-badge,
+.sold-badge{
+    display:inline-block;
+    padding:6px 14px;
+    border-radius:999px;
+    font-size:14px;
+    font-weight:600;
+}
+
+.available-badge{
+    background:#d1fae5;
+    color:#065f46;
+}
+
+.reserved-badge{
+    background:#fef3c7;
+    color:#92400e;
+}
+
+.sold-badge{
+    background:#fee2e2;
+    color:#991b1b;
+}

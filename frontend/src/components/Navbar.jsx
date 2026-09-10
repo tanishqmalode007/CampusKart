@@ -8,7 +8,6 @@ function Navbar() {
   const { isLoggedIn, user, logout } = useAuth();
 
   const [showModal, setShowModal] = useState(false);
-
   const [showMenu, setShowMenu] = useState(false);
 
   const navigate = useNavigate();
@@ -31,7 +30,11 @@ function Navbar() {
     <>
       <nav className="navbar">
 
-        <Link to="/" className="logo">
+        <Link
+          to="/"
+          className="logo"
+          onClick={() => setShowMenu(false)}
+        >
           <FaShoppingCart />
           <span>CampusKart</span>
         </Link>
@@ -56,9 +59,7 @@ function Navbar() {
           </li>
 
           <li>
-            <Link to="/about">
-              About
-            </Link>
+            <Link to="/about">About</Link>
           </li>
 
         </ul>
@@ -97,34 +98,47 @@ function Navbar() {
 
               <div className="dropdown-menu">
 
-                <button onClick={() => navigate("/my-campus")}>
+                {/* My Campus */}
+                <button
+                  onClick={() => {
+                    navigate("/my-campus");
+                    setShowMenu(false);
+                  }}
+                >
                   My Campus
                 </button>
 
+                {/* My Listings */}
                 <button
-                onClick={() => {
-                navigate("/my-listings");
-                setShowMenu(false);
-                  }}
-                  >
-                  My Listings
-                  </button> 
-                  
-                  <button
                   onClick={() => {
-                  navigate("/my-purchase-requests");
+                    navigate("/my-listings");
                     setShowMenu(false);
-                      }}
-                      >
-                        My Purchase Requests
-                        </button>
+                  }}
+                >
+                  My Listings
+                </button>
 
+                {/* My Purchase Requests */}
                 <button
-                  onClick={() => alert("Coming Soon ❤️")}
+                  onClick={() => {
+                    navigate("/my-purchase-requests");
+                    setShowMenu(false);
+                  }}
+                >
+                  My Purchase Requests
+                </button>
+
+                {/* Wishlist */}
+                <button
+                  onClick={() => {
+                    alert("Coming Soon ❤️");
+                    setShowMenu(false);
+                  }}
                 >
                   Wishlist
                 </button>
 
+                {/* Logout */}
                 <button onClick={handleLogout}>
                   Logout
                 </button>
